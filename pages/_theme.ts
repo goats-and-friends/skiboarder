@@ -5,7 +5,8 @@ import React from "react";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function getTheme() {
-  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  // const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  const prefersDarkMode = false;
 
   const rawTheme = React.useMemo(
     () =>

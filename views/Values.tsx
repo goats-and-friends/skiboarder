@@ -14,7 +14,8 @@ const item: SxProps<Theme> = {
 };
 
 export default function Values() {
-  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  // const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  const prefersDarkMode = false;
   const bgColor = `secondary.${prefersDarkMode ? "dark" : "light"}`;
   return (
     <Box
