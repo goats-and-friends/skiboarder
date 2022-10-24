@@ -53,10 +53,7 @@ const LoginView = ({
             />
             <Box>{promptText}</Box>
             <Stack spacing={2} divider={<Divider />}>
-              <form
-                action="http://localhost:3000/api/auth/signin/email"
-                method="POST"
-              >
+              <form action="/api/auth/signin/email" method="POST">
                 <Stack spacing={2}>
                   <Input
                     name="csrfToken"
