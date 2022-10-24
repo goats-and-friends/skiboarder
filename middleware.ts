@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 function isLoginPage(req: NextRequest): boolean {
   const path = req.nextUrl.pathname;
-  return path === "/login" || path === "/register";
+  return path === "/login" || path === "/register" || path === "/";
 }
 
 export default withAuth(
@@ -22,4 +22,4 @@ export default withAuth(
   }
 );
 
-export const config = { matcher: ["/dashboard", "/register", "/login"] };
+export const config = { matcher: ["/dashboard", "/", "/register", "/login"] };
