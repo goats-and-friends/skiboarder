@@ -107,7 +107,7 @@ export default function HowItWorks() {
           size="large"
           variant="contained"
           component="a"
-          href="/signup"
+          href="/register"
           sx={{ mt: 8 }}
         >
           Sign me up!

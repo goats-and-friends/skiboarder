@@ -13,7 +13,7 @@ export function Copyright() {
       {" Icons made by "}
       <Link href="https://freepik.com">Freepik</Link>
       {" from "}
-      <Link href="https://www.flatiron.com">www.flaticon.com</Link>
+      <Link href="https://www.flaticon.com">www.flaticon.com</Link>
       {" are licensed by "}
       <Link href="https://creativecommons.org/licenses/by/3.0/">CC 3.0 BY</Link>
     </Typography>

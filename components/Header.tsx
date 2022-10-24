@@ -1,13 +1,29 @@
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 import Toolbar from "@mui/material/Toolbar";
 
+import Image from "next/image";
+import { signOut, useSession } from "next-auth/react";
+import Stack from "@mui/material/Stack";
+import type { DefaultSession } from "next-auth";
+
+function formatDisplayName(user?: DefaultSession["user"]) {
+  return user?.name;
+}
+
 export default function Header() {
   const rightLink = {
-    fontSize: 16,
+    fontSize: { xs: 14, md: 16 },
     ml: 3,
   };
+  const { data: session, status } = useSession();
+  const loading = status === "loading";
+
+  const image =
+    session?.user?.image ??
+    "https://cdn-icons-png.flaticon.com/512/456/456141.png";
   return (
     <AppBar
       position="absolute"
@@ -18,25 +34,80 @@ export default function Header() {
       }}
     >
       <Toolbar sx={{ justifyContent: "space-between" }}>
-        <Box sx={{ flex: 1 }} />
+        <Box sx={{ flex: { xs: 0, sm: 1 } }} />
         <Link
-          variant="h6"
+          variant="h1"
           underline="none"
           color="inherit"
           href="/"
-          sx={{ fontSize: 24 }}
+          sx={{
+            fontSize: { xs: 14, sm: 18, md: 24 },
+            width: { xs: 100, sm: "inherit" },
+          }}
         >
-          {"Goats and Friends Ski Trip"}
+          Goats & Friends Ski&nbsp;Trip
         </Link>
-        <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
-          <Link
-            variant="h6"
-            underline="none"
-            href="/signup"
-            sx={{ ...rightLink, color: "secondary.main" }}
+        <Box sx={{ flex: 1 }} className={`nojs-show`}>
+          <Stack
+            sx={{ flex: 1 }}
+            alignItems="center"
+            justifyContent="flex-end"
+            direction="row"
+            spacing={2}
           >
-            {"Sign Up"}
-          </Link>
+            {(status === "loading" && <></>) ||
+              (session?.user && (
+                <>
+                  {session.user.image && (
+                    <Image
+                      src={image}
+                      alt="user avatar"
+                      width="48"
+                      height="48"
+                      referrerPolicy="no-referrer"
+                      style={{
+                        borderRadius: "2rem",
+                      }}
+                    />
+                  )}
+
+                  <Stack>
+                    <small>Signed in as</small>
+                    <strong>{formatDisplayName(session.user)}</strong>
+                  </Stack>
+
+                  <Button
+                    color="secondary"
+                    variant="contained"
+                    size="small"
+                    component="a"
+                    onClick={() => signOut()}
+                  >
+                    Sign out
+                  </Button>
+                </>
+              )) || (
+                <>
+                  <Link
+                    variant="h6"
+                    underline="none"
+                    href="/login"
+                    color="inherit"
+                    sx={{ ...rightLink }}
+                  >
+                    {"Log in"}
+                  </Link>
+                  <Link
+                    variant="h6"
+                    underline="none"
+                    href="/register"
+                    sx={{ ...rightLink, color: "secondary.main" }}
+                  >
+                    {"Sign up"}
+                  </Link>
+                </>
+              )}
+          </Stack>
         </Box>
       </Toolbar>
     </AppBar>

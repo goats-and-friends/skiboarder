@@ -108,7 +108,7 @@ export default function Hero() {
         variant="contained"
         size="large"
         component="a"
-        href="/signup"
+        href="/register"
         sx={{ minWidth: 200 }}
       >
         Register free
