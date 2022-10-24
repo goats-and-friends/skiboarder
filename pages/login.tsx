@@ -11,7 +11,7 @@ const Login = ({
   providers,
 }: {
   csrfToken: string;
-  providers: ClientSafeProvider[];
+  providers: Record<string, ClientSafeProvider>;
 }) => {
   return (
     <LoginView

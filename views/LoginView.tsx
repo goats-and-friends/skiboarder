@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import Divider from "@mui/material/Divider";
+import Input from "@mui/material/Input";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import { signIn, ClientSafeProvider } from "next-auth/react";
@@ -14,7 +15,7 @@ const LoginView = ({
 }: {
   csrfToken: string;
   promptText: string;
-  providers: ClientSafeProvider[];
+  providers: Record<string, ClientSafeProvider>;
 }) => {
   return (
     <div style={{ overflow: "hidden", position: "relative" }}>
@@ -51,41 +52,48 @@ const LoginView = ({
               alt="App Logo"
             />
             <Box>{promptText}</Box>
-            <Stack
-              spacing={2}
-              divider={<Divider orientation="horizontal" flexItem />}
-            >
-              <Stack spacing={2}>
-                <input
-                  name="csrfToken"
-                  type="hidden"
-                  defaultValue={csrfToken}
-                />
-                <TextField
-                  id="email"
-                  label="Email address"
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                />
-                <Button variant="contained" color="secondary">
-                  Send magic link
-                </Button>
-              </Stack>
+            <Stack spacing={2} divider={<Divider />}>
+              <form
+                action="http://localhost:3000/api/auth/signin/email"
+                method="POST"
+              >
+                <Stack spacing={2}>
+                  <Input
+                    name="csrfToken"
+                    type="hidden"
+                    defaultValue={csrfToken}
+                  />
+                  <TextField
+                    id="email"
+                    name="email"
+                    label="Email address"
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                  />
+                  <Button variant="contained" color="secondary" type="submit">
+                    Send magic link
+                  </Button>
+                </Stack>
+              </form>
               <Stack spacing={2}>
                 {providers &&
                   Object.values(providers).map(
-                    (provider: ClientSafeProvider) => (
-                      <div key={provider.name} style={{ marginBottom: 0 }}>
-                        <Button
-                          variant="outlined"
-                          fullWidth
-                          onClick={() => signIn(provider.id)}
-                        >
-                          Sign in with {provider.name}
-                        </Button>
-                      </div>
-                    )
+                    (provider: ClientSafeProvider) => {
+                      if (provider.type === "oauth") {
+                        return (
+                          <div key={provider.name} style={{ marginBottom: 0 }}>
+                            <Button
+                              variant="outlined"
+                              fullWidth
+                              onClick={() => signIn(provider.id)}
+                            >
+                              Sign in with {provider.name}
+                            </Button>
+                          </div>
+                        );
+                      }
+                    }
                   )}
               </Stack>
             </Stack>
