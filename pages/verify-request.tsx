@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
+import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import Image from "next/image";
 
@@ -32,12 +33,18 @@ const VerifyRequest = () => {
           }}
         >
           <Stack spacing={2} padding={8}>
-            <Image
-              src="/vercel.svg"
-              width="196px"
-              height="64px"
-              alt="App Logo"
-            />
+            <Link
+              variant="h1"
+              underline="none"
+              color="inherit"
+              href="/"
+              sx={{
+                fontSize: 24,
+                textAlign: "center",
+              }}
+            >
+              Goats & Friends Ski&nbsp;Trip
+            </Link>
             <Box>
               A verification link has been sent. Please check your email.
             </Box>
