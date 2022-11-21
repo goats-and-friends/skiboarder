@@ -131,7 +131,7 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
             />
             <FormControl>
               <FormLabel id="demo-radio-buttons-group-label">
-                How interested are you to the trip? (This is not a commitment.)
+                How interested are you in the trip? (This is not a commitment.)
               </FormLabel>
               <RadioGroup
                 aria-labelledby="demo-radio-buttons-group-label"
