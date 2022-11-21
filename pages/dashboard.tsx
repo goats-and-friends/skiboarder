@@ -71,7 +71,7 @@ const Home: NextPage = () => {
             </FormControl>
             <FormControl component="fieldset" variant="standard">
               <FormLabel component="legend">
-                How many guests do you represent?
+                Roughly how many guests will join you?
               </FormLabel>
               <TextField type="number"></TextField>
             </FormControl>
