@@ -52,7 +52,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 };
 
 type AppProps = {
-  initialSurvey: InitialSurvey & { availabilities: Availability[] };
+  initialSurvey: (InitialSurvey & { availabilities: Availability[] }) | null;
 };
 
 const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
@@ -74,18 +74,18 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
   const [submitted, setSubmitted] = useState(false);
   const [availability, setAvailability] = useState<Availability>(defaultAvail);
   const [interestLevel, setInterestLevel] = useState<string>(
-    initialSurvey.interestLevel || "definitely"
+    initialSurvey?.interestLevel || "definitely"
   );
   const handleInterestLevel = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInterestLevel((event.target as HTMLInputElement).value);
     setSubmitted(false);
   };
-  const [guests, setGuests] = useState<number>(initialSurvey.guests || 0);
+  const [guests, setGuests] = useState<number>(initialSurvey?.guests || 0);
   const handleGuests = (event: React.ChangeEvent<HTMLInputElement>) => {
     setGuests(parseInt((event.target as HTMLInputElement).value));
     setSubmitted(false);
   };
-  const [comment, setComment] = useState<string>(initialSurvey.comment || "");
+  const [comment, setComment] = useState<string>(initialSurvey?.comment || "");
   const handleComment = (event: React.ChangeEvent<HTMLInputElement>) => {
     setComment((event.target as HTMLInputElement).value);
     setSubmitted(false);
