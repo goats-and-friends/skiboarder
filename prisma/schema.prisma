@@ -38,13 +38,32 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
   name          String?
-  email         String?   @unique
+  email         String?        @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
+  initialSurvey InitialSurvey?
+}
+
+model Availability {
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  date            String
+  status          String
+  initialSurvey   InitialSurvey? @relation(fields: [initialSurveyId], references: [id])
+  initialSurveyId String?        @db.ObjectId
+}
+
+model InitialSurvey {
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  guests         Int
+  availabilities Availability[]
+  user           User           @relation(fields: [userEmail], references: [email])
+  interestLevel  String
+  comment        String
+  userEmail      String         @unique
 }
 
 model VerificationToken {

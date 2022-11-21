@@ -20,25 +20,14 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ToggleButton from "@mui/material/ToggleButton";
 import parse from "date-fns/parse";
 import isWithinInterval from "date-fns/isWithinInterval";
-
-function getDates() {
-  return eachWeekOfInterval(
-    {
-      start: new Date(2022, 12, 7), // January 7
-      end: new Date(2023, 3, 1), // April 1
-    },
-    {
-      weekStartsOn: 5, // Friday
-    }
-  );
-}
+import { Availability, Status } from "../lib/availability";
 
 type SpecialDate = {
   date: string;
   name: string;
 };
 
-function getSpecialDateText(friday: Date): string | undefined {
+function get2023SpecialDateText(friday: Date): string | undefined {
   const tuesday = addDays(friday, 4);
 
   const specialDates: SpecialDate[] = [
@@ -64,27 +53,20 @@ function getSpecialDateText(friday: Date): string | undefined {
   return matchingDates.map((d) => d.name).join(", ");
 }
 
-enum Status {
-  Unavailable = "unavailable",
-  Available = "available",
-  Preferred = "preferred",
-}
-
-type Availability = {
-  [key: string]: Status;
-};
-
-export default function AvailabilityPicker() {
-  const q1Weekends = getDates();
-  const availability: Availability = {};
-  for (const date of q1Weekends) {
-    availability[date.toJSON()] = Status.Available;
-  }
-  const [state, setState] = React.useState<Availability>(availability);
+export default function AvailabilityPicker({
+  state,
+  setState,
+  setSubmitted,
+}: {
+  state: Availability;
+  setState: React.Dispatch<React.SetStateAction<Availability>>;
+  setSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   function handleChange(key: string, status: Status | null) {
+    setSubmitted(false);
     if (status === null) {
       return;
     }
@@ -117,9 +99,9 @@ export default function AvailabilityPicker() {
       <FormGroup>
         <Stack spacing={1}>
           {Object.keys(state).map((key) => {
-            const date = parseJSON(key);
+            const date = parse(key, "yyyy-MM-dd", new Date());
             const status = state[key];
-            const specialDate = getSpecialDateText(date);
+            const specialDate = get2023SpecialDateText(date);
             return (
               <Stack key={key} direction="row" alignItems="center" spacing={1}>
                 <ToggleButtonGroup
@@ -130,7 +112,6 @@ export default function AvailabilityPicker() {
                     e: React.MouseEvent<HTMLElement>,
                     value: Status
                   ) => {
-                    console.log(key);
                     return handleChange(key, value);
                   }}
                   aria-label="availability"
