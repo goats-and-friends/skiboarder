@@ -38,6 +38,7 @@ export default async function handler(
   ) {
     return;
   }
+  const email = session.user.email;
 
   type InitialSurveyRequestBody = {
     availability: ClientAvailability;
@@ -46,18 +47,17 @@ export default async function handler(
 
   const availabilities = fromMap(availability);
 
-  const user = await prisma.user.upsert({
-    create: {},
-    update: {
-      initialSurvey: {
-        upsert: {
+  const initialSurvey = await prisma.initialSurvey.findFirst({
+    where: {
+      userEmail: email,
+    },
+  });
+  console.log(initialSurvey);
+  if (initialSurvey === null) {
+    await prisma.user.update({
+      data: {
+        initialSurvey: {
           create: {
-            availabilities: {
-              createMany: { data: availabilities },
-            },
-            ...(rest as Prisma.InitialSurveyCreateWithoutUserInput),
-          },
-          update: {
             availabilities: {
               createMany: { data: availabilities },
             },
@@ -65,9 +65,48 @@ export default async function handler(
           },
         },
       },
-    },
+      where: {
+        email,
+      },
+    });
+  } else {
+    await prisma.$transaction([
+      // Nested upsert is finnicky so we just delete the existing
+      // availability entities. This also means we can replace
+      // the dates entirely if needed.
+      prisma.availability.deleteMany({
+        where: {
+          initialSurvey,
+        },
+      }),
+      prisma.user.update({
+        data: {
+          initialSurvey: {
+            upsert: {
+              create: {
+                availabilities: {
+                  createMany: { data: availabilities },
+                },
+                ...rest,
+              },
+              update: {
+                availabilities: {
+                  createMany: { data: availabilities },
+                },
+                ...rest,
+              },
+            },
+          },
+        },
+        where: {
+          email,
+        },
+      }),
+    ]);
+  }
+  const user = await prisma.user.findFirstOrThrow({
     where: {
-      email: session?.user.email,
+      email,
     },
     include: {
       initialSurvey: {
@@ -77,6 +116,5 @@ export default async function handler(
       },
     },
   });
-  console.log(user);
   res.status(200).json({ initialSurvey: user?.initialSurvey });
 }
