@@ -13,7 +13,7 @@ import type { GetServerSideProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useState } from "react";
-import { Copyright } from "../components/Copyright";
+import { Footer } from "../components/Footer";
 import Header from "../components/Header";
 import { Availability, get2023Dates, Status } from "../lib/availability";
 import styles from "../styles/Home.module.css";
@@ -196,7 +196,7 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
           </Stack>
         )}
       </Container>
-      <Copyright />
+      <Footer />
     </div>
   );
 };
