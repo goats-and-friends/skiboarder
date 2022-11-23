@@ -21,6 +21,7 @@ import AvailabilityPicker from "../views/AvailabilityPicker";
 import { unstable_getServerSession } from "next-auth/next";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { InitialSurvey, PrismaClient } from "@prisma/client";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 const prisma = new PrismaClient();
 
@@ -183,7 +184,13 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
             </FormControl>
             <FormControl>
               <Button variant="contained" onClick={submit} disabled={submitted}>
-                {submitted ? "Submitted" : "Submit"}
+                {submitted ? (
+                  <>
+                    Submitted <CheckCircleIcon />
+                  </>
+                ) : (
+                  "Submit"
+                )}
               </Button>
             </FormControl>
           </Stack>
