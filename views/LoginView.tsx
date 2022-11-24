@@ -79,6 +79,14 @@ const LoginView = ({
                   <Button variant="contained" color="secondary" type="submit">
                     Send magic link
                   </Button>
+                  <Typography variant="caption">
+                    By registering a new account, I consent to receive emails
+                    relating to the ski trip. I have read and agree to the{" "}
+                    <Link href="/privacy" target="_new">
+                      privacy policy
+                    </Link>
+                    .
+                  </Typography>
                 </Stack>
               </form>
               <Stack spacing={2}>
