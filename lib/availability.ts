@@ -21,3 +21,7 @@ export enum Status {
 export type Availability = {
   [key: string]: Status | null;
 };
+
+export type RequiredAvailability = {
+  [key: string]: Status;
+};

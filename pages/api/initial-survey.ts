@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { Availability, InitialSurvey, PrismaClient } from "@prisma/client";
 import { Prisma } from ".prisma/client";
 import { unstable_getServerSession } from "next-auth/next";
-import { Availability as ClientAvailability } from "../../lib/availability";
+import { RequiredAvailability as ClientAvailability } from "../../lib/availability";
 import { authOptions } from "./auth/[...nextauth]";
 
 const prisma = new PrismaClient();
