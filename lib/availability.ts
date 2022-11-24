@@ -14,10 +14,10 @@ export function get2023Dates() {
 
 export enum Status {
   Unavailable = "unavailable",
+  Maybe = "maybe",
   Available = "available",
-  Preferred = "preferred",
 }
 
 export type Availability = {
-  [key: string]: Status;
+  [key: string]: Status | null;
 };

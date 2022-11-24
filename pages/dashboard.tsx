@@ -63,28 +63,40 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
   const defaultAvail: Availability = {};
   if (initialSurvey) {
     for (const date of initialSurvey.availabilities) {
-      defaultAvail[date.date] = date.status;
+      if (date.date) {
+        defaultAvail[date.date] = date.status;
+      }
     }
   } else {
     const q1Weekends = get2023Dates();
     for (const date of q1Weekends) {
-      defaultAvail[format(date, "yyyy-MM-dd")] = Status.Available;
+      defaultAvail[format(date, "yyyy-MM-dd")] = null;
     }
   }
 
   const [submitted, setSubmitted] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
   const [availability, setAvailability] = useState<Availability>(defaultAvail);
-  const [interestLevel, setInterestLevel] = useState<string>(
-    initialSurvey?.interestLevel || "definitely"
+  const [availabilityValid, setAvailabilityValid] = useState<boolean>(true);
+
+  const [interestLevel, setInterestLevel] = useState<string | null>(
+    initialSurvey?.interestLevel || null
   );
+  const [interestLevelValid, setInterestLevelValid] = useState<boolean>(true);
   const handleInterestLevel = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInterestLevel((event.target as HTMLInputElement).value);
     setSubmitted(false);
+    setInterestLevelValid(true);
   };
-  const [guests, setGuests] = useState<number>(initialSurvey?.guests || 0);
+  const [guests, setGuests] = useState<number | null>(
+    initialSurvey?.guests || null
+  );
+  const [guestsValid, setGuestsValid] = useState<boolean>(true);
   const handleGuests = (event: React.ChangeEvent<HTMLInputElement>) => {
     setGuests(parseInt((event.target as HTMLInputElement).value));
     setSubmitted(false);
+    setGuestsValid(true);
   };
   const [comment, setComment] = useState<string>(initialSurvey?.comment || "");
   const handleComment = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,6 +111,14 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
       guests,
       comment,
     };
+    setAvailabilityValid(
+      Object.values(availability).filter((s) => s === null).length === 0
+    );
+    setInterestLevelValid(interestLevel !== null);
+    setGuestsValid(guests !== null && !isNaN(guests));
+    if (!availabilityValid || !interestLevelValid || !guestsValid) {
+      return;
+    }
     setSubmitted(true);
     const response = await fetch("/api/initial-survey", {
       method: "POST",
@@ -107,6 +127,8 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
     });
     if (!response.ok) {
       setSubmitted(false);
+    } else {
+      setSubmitSuccess(true);
     }
   };
 
@@ -126,14 +148,26 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
           <Stack sx={{ mt: 4, mb: 4 }} spacing={4}>
             <Typography variant="h3">Initial Survey</Typography>
             <AvailabilityPicker
+              valid={availabilityValid}
+              setValid={setAvailabilityValid}
               state={availability}
               setState={setAvailability}
               setSubmitted={setSubmitted}
             />
             <FormControl>
-              <FormLabel id="demo-radio-buttons-group-label">
-                How interested are you in the trip? (This is not a commitment.)
+              <FormLabel
+                error={!interestLevelValid}
+                id="demo-radio-buttons-group-label"
+              >
+                *How interested are you in the trip? (This is not a commitment.)
               </FormLabel>
+              {interestLevelValid ? (
+                ""
+              ) : (
+                <Typography variant="caption" color="error">
+                  Response is required.
+                </Typography>
+              )}
               <RadioGroup
                 aria-labelledby="demo-radio-buttons-group-label"
                 defaultValue="definitely"
@@ -158,12 +192,24 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
                 />
               </RadioGroup>
             </FormControl>
-            <FormControl component="fieldset" variant="standard">
+            <FormControl
+              error={!guestsValid}
+              component="fieldset"
+              variant="standard"
+            >
               <FormLabel component="legend">
-                Roughly how many guests will join you?
+                *Roughly how many guests will join you?
               </FormLabel>
+              {guestsValid ? (
+                ""
+              ) : (
+                <Typography variant="caption" color="error">
+                  Response is required.
+                </Typography>
+              )}
               <TextField
                 type="number"
+                error={!guestsValid}
                 onChange={handleGuests}
                 value={guests}
                 InputProps={{
@@ -182,12 +228,11 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
                 value={comment}
               ></TextField>
             </FormControl>
+            <Typography>*Required</Typography>
             <FormControl>
               <Button variant="contained" onClick={submit} disabled={submitted}>
                 {submitted ? (
-                  <>
-                    Submitted <CheckCircleIcon />
-                  </>
+                  <>Submitted{submitSuccess ? <CheckCircleIcon /> : ""}</>
                 ) : (
                   "Submit"
                 )}

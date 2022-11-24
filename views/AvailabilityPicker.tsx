@@ -11,6 +11,7 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import PendingIcon from "@mui/icons-material/Pending";
 import StarIcon from "@mui/icons-material/Star";
 import addDays from "date-fns/addDays";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -54,10 +55,14 @@ function get2023SpecialDateText(friday: Date): string | undefined {
 }
 
 export default function AvailabilityPicker({
+  valid,
+  setValid,
   state,
   setState,
   setSubmitted,
 }: {
+  valid: boolean;
+  setValid: React.Dispatch<React.SetStateAction<boolean>>;
   state: Availability;
   setState: React.Dispatch<React.SetStateAction<Availability>>;
   setSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
@@ -67,6 +72,7 @@ export default function AvailabilityPicker({
 
   function handleChange(key: string, status: Status | null) {
     setSubmitted(false);
+    setValid(true);
     if (status === null) {
       return;
     }
@@ -78,19 +84,26 @@ export default function AvailabilityPicker({
 
   return (
     <FormControl component="fieldset" variant="standard">
-      <FormLabel component="legend">
-        What dates are you currently available?
+      <FormLabel error={!valid} component="legend">
+        *Are you available any of these weekends?
       </FormLabel>
+      {valid ? (
+        ""
+      ) : (
+        <Typography variant="caption" color="error">
+          Must provide a response for all dates.
+        </Typography>
+      )}
       {isMobile ? (
         <Box mb={2}>
           <Stack direction="row" alignItems="center">
-            <CancelIcon /> Unavailable
+            <CancelIcon /> No
           </Stack>
           <Stack direction="row" alignItems="center">
-            <CheckCircleIcon /> Available
+            <PendingIcon /> Maybe
           </Stack>
           <Stack direction="row" alignItems="center">
-            <StarIcon /> Preferred
+            <CheckCircleIcon /> Yes
           </Stack>
         </Box>
       ) : (
@@ -98,6 +111,9 @@ export default function AvailabilityPicker({
       )}
       <FormGroup>
         <Stack spacing={1}>
+          <Typography variant="body1" color="initial">
+            All dates are Friday morning through Sunday afternoon.
+          </Typography>
           {Object.keys(state).map((key) => {
             const date = parse(key, "yyyy-MM-dd", new Date());
             const status = state[key];
@@ -126,50 +142,50 @@ export default function AvailabilityPicker({
                       <CancelIcon />
                     ) : (
                       <>
-                        <CancelIcon fontSize="small" />
-                        Can't Go
+                        <CancelIcon fontSize="small" sx={{ mr: 0.5 }} />
+                        No
+                      </>
+                    )}
+                  </ToggleButton>
+                  <ToggleButton
+                    value={Status.Maybe}
+                    color="info"
+                    aria-label="available"
+                  >
+                    {isMobile ? (
+                      <PendingIcon />
+                    ) : (
+                      <>
+                        <PendingIcon fontSize="small" sx={{ mr: 0.5 }} />
+                        Maybe
                       </>
                     )}
                   </ToggleButton>
                   <ToggleButton
                     value={Status.Available}
                     color="success"
-                    aria-label="available"
+                    aria-label="preferred"
                   >
                     {isMobile ? (
                       <CheckCircleIcon />
                     ) : (
                       <>
-                        <CheckCircleIcon fontSize="small" />
-                        Avail
-                      </>
-                    )}
-                  </ToggleButton>
-                  <ToggleButton
-                    value={Status.Preferred}
-                    color="secondary"
-                    aria-label="preferred"
-                  >
-                    {isMobile ? (
-                      <StarIcon />
-                    ) : (
-                      <>
-                        <StarIcon fontSize="small" />
-                        Prefer
+                        <CheckCircleIcon fontSize="small" sx={{ mr: 0.5 }} />
+                        Yes
                       </>
                     )}
                   </ToggleButton>
                 </ToggleButtonGroup>
                 <Typography key="date">
                   {intlFormat(date, {
-                    weekday: isMobile ? "short" : "long",
-                    month: isMobile ? "numeric" : "long",
+                    // weekday: "short",
+                    month: isMobile ? "numeric" : "short",
                     day: "numeric",
                   }).replace(" ", "\u00A0")}{" "}
                   to{" "}
                   {intlFormat(addDays(date, 2), {
-                    weekday: isMobile ? "short" : "long",
-                    month: isMobile ? "numeric" : "long",
+                    // weekday: "short",
+                    month: isMobile ? "numeric" : "short",
                     day: "numeric",
                   }).replace(" ", "\u00A0")}
                   {specialDate
