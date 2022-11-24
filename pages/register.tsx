@@ -20,6 +20,9 @@ const Login = ({
       promptText={
         "Thanks for considering joining the ski\u00A0trip! We'll create you an account if it doesn't already exist. Sign in below:"
       }
+      consentText={
+        "By registering a new account, I consent to receive emails relating to the ski trip. "
+      }
     />
   );
 };

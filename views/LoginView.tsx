@@ -13,10 +13,12 @@ import Image from "next/image";
 const LoginView = ({
   csrfToken,
   promptText,
+  consentText,
   providers,
 }: {
   csrfToken: string;
   promptText: string;
+  consentText: string;
   providers: Record<string, ClientSafeProvider>;
 }) => {
   return (
@@ -80,8 +82,7 @@ const LoginView = ({
                     Send magic link
                   </Button>
                   <Typography variant="caption">
-                    By registering a new account, I consent to receive emails
-                    relating to the ski trip. I have read and agree to the{" "}
+                    {consentText}I have read and agree to the{" "}
                     <Link href="/privacy" target="_new">
                       privacy policy
                     </Link>
