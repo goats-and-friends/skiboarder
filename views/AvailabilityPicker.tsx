@@ -17,6 +17,8 @@ import addDays from "date-fns/addDays";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
 import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Grid from "@mui/material/Grid";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ToggleButton from "@mui/material/ToggleButton";
 import parse from "date-fns/parse";
@@ -97,105 +99,125 @@ export default function AvailabilityPicker({
       {isMobile ? (
         <Box mb={2}>
           <Stack direction="row" alignItems="center">
-            <CancelIcon /> No
+            <CheckCircleIcon /> Yes
           </Stack>
           <Stack direction="row" alignItems="center">
             <PendingIcon /> Maybe
           </Stack>
           <Stack direction="row" alignItems="center">
-            <CheckCircleIcon /> Yes
+            <CancelIcon /> No
           </Stack>
         </Box>
       ) : (
         ""
       )}
       <FormGroup>
-        <Stack spacing={1}>
-          <Typography variant="body1" color="initial">
-            All dates are Friday morning through Sunday afternoon.
-          </Typography>
+        <Typography variant="body1" color="initial">
+          All dates are Friday morning through Sunday afternoon.
+        </Typography>
+        <Grid container spacing={1} sx={{ mt: 1 }} alignItems="center">
           {Object.keys(state).map((key) => {
             const date = parse(key, "yyyy-MM-dd", new Date());
             const status = state[key];
             const specialDate = get2023SpecialDateText(date);
             return (
-              <Stack key={key} direction="row" alignItems="center" spacing={1}>
-                <ToggleButtonGroup
-                  key="controls"
-                  exclusive
-                  value={status}
-                  onChange={(
-                    e: React.MouseEvent<HTMLElement>,
-                    value: Status
-                  ) => {
-                    return handleChange(key, value);
-                  }}
-                  aria-label="availability"
-                  size="small"
-                >
-                  <ToggleButton
-                    value={Status.Unavailable}
-                    color="error"
-                    aria-label="unavailable"
+              <>
+                <Grid item xs={6} md={3}>
+                  <Card
+                    variant="outlined"
+                    sx={{
+                      p: 1,
+                    }}
                   >
-                    {isMobile ? (
-                      <CancelIcon />
-                    ) : (
-                      <>
-                        <CancelIcon fontSize="small" sx={{ mr: 0.5 }} />
-                        No
-                      </>
-                    )}
-                  </ToggleButton>
-                  <ToggleButton
-                    value={Status.Maybe}
-                    color="info"
-                    aria-label="available"
+                    <Stack justifyContent="center" sx={{ minHeight: 41 }}>
+                      <Typography key="date" sx={{ fontWeight: "bold" }}>
+                        {intlFormat(date, {
+                          // weekday: "short",
+                          month: isMobile ? "numeric" : "short",
+                          day: "numeric",
+                        }).replace(" ", "\u00A0")}{" "}
+                        to{" "}
+                        {intlFormat(addDays(date, 2), {
+                          // weekday: "short",
+                          month: isMobile ? "numeric" : "short",
+                          day: "numeric",
+                        }).replace(" ", "\u00A0")}
+                      </Typography>
+
+                      <Typography variant="caption" key="date">
+                        {specialDate
+                          ? ` ${specialDate.replace(" ", "\u00A0")}`
+                          : ""}
+                      </Typography>
+                    </Stack>
+                  </Card>
+                </Grid>
+
+                <Grid item xs={6} md={9}>
+                  <ToggleButtonGroup
+                    key="controls"
+                    exclusive
+                    value={status}
+                    onChange={(
+                      e: React.MouseEvent<HTMLElement>,
+                      value: Status
+                    ) => {
+                      return handleChange(key, value);
+                    }}
+                    aria-label="availability"
+                    size="small"
                   >
-                    {isMobile ? (
-                      <PendingIcon />
-                    ) : (
-                      <>
-                        <PendingIcon fontSize="small" sx={{ mr: 0.5 }} />
-                        Maybe
-                      </>
-                    )}
-                  </ToggleButton>
-                  <ToggleButton
-                    value={Status.Available}
-                    color="success"
-                    aria-label="preferred"
-                  >
-                    {isMobile ? (
-                      <CheckCircleIcon />
-                    ) : (
-                      <>
-                        <CheckCircleIcon fontSize="small" sx={{ mr: 0.5 }} />
-                        Yes
-                      </>
-                    )}
-                  </ToggleButton>
-                </ToggleButtonGroup>
-                <Typography key="date">
-                  {intlFormat(date, {
-                    // weekday: "short",
-                    month: isMobile ? "numeric" : "short",
-                    day: "numeric",
-                  }).replace(" ", "\u00A0")}{" "}
-                  to{" "}
-                  {intlFormat(addDays(date, 2), {
-                    // weekday: "short",
-                    month: isMobile ? "numeric" : "short",
-                    day: "numeric",
-                  }).replace(" ", "\u00A0")}
-                  {specialDate
-                    ? ` [${specialDate.replace(" ", "\u00A0")}]`
-                    : ""}
-                </Typography>
-              </Stack>
+                    <ToggleButton
+                      value={Status.Available}
+                      color="success"
+                      aria-label="preferred"
+                      sx={{ minHeight: 61, p: 2 }}
+                    >
+                      {isMobile ? (
+                        <CheckCircleIcon />
+                      ) : (
+                        <>
+                          <CheckCircleIcon fontSize="small" sx={{ mr: 0.5 }} />
+                          Yes
+                        </>
+                      )}
+                    </ToggleButton>
+                    <ToggleButton
+                      value={Status.Maybe}
+                      color="info"
+                      aria-label="available"
+                      sx={{ minHeight: 61, p: 2 }}
+                    >
+                      {isMobile ? (
+                        <PendingIcon />
+                      ) : (
+                        <>
+                          <PendingIcon fontSize="small" sx={{ mr: 0.5 }} />
+                          Maybe
+                        </>
+                      )}
+                    </ToggleButton>
+                    <ToggleButton
+                      value={Status.Unavailable}
+                      color="error"
+                      aria-label="unavailable"
+                      sx={{ minHeight: 61, p: 2 }}
+                    >
+                      {isMobile ? (
+                        <CancelIcon />
+                      ) : (
+                        <>
+                          <CancelIcon fontSize="small" sx={{ mr: 0.5 }} />
+                          No
+                        </>
+                      )}
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                </Grid>
+              </>
             );
           })}
-        </Stack>
+        </Grid>
       </FormGroup>
     </FormControl>
   );
