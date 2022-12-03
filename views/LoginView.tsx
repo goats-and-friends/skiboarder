@@ -9,6 +9,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { signIn, ClientSafeProvider } from "next-auth/react";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 const LoginView = ({
   csrfToken,
@@ -21,6 +22,12 @@ const LoginView = ({
   consentText: string;
   providers: Record<string, ClientSafeProvider>;
 }) => {
+  const router = useRouter();
+  const { error } = router.query;
+  let friendlyError = error;
+  if (error === "OAuthAccountNotLinked") {
+    friendlyError = "Account registered with email. Please use magic link.";
+  }
   return (
     <div style={{ overflow: "hidden", position: "relative" }}>
       <Box
@@ -62,6 +69,9 @@ const LoginView = ({
               Goats & Friends Ski&nbsp;Trip
             </Link>
             <Box>{promptText}</Box>
+            {error && (
+              <Typography color="error">Error: {friendlyError}</Typography>
+            )}
             <Stack spacing={2} divider={<Divider />}>
               <form action="/api/auth/signin/email" method="POST">
                 <Stack spacing={2}>
