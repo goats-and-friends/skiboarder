@@ -8,6 +8,7 @@ import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 import Stack from "@mui/material/Stack";
 import type { DefaultSession } from "next-auth";
+import Avatar from "@mui/material/Avatar";
 
 function formatDisplayName(user?: DefaultSession["user"]) {
   return user?.name;
@@ -21,9 +22,7 @@ export default function Header() {
   const { data: session, status } = useSession();
   const loading = status === "loading";
 
-  const image =
-    session?.user?.image ??
-    "https://cdn-icons-png.flaticon.com/512/456/456141.png";
+  const image = session?.user?.image;
   return (
     <AppBar
       position="absolute"
@@ -58,22 +57,13 @@ export default function Header() {
             {(status === "loading" && <></>) ||
               (session?.user && (
                 <>
-                  {session.user.image && (
-                    <Image
-                      src={image}
-                      alt="user avatar"
-                      width="48"
-                      height="48"
-                      referrerPolicy="no-referrer"
-                      style={{
-                        borderRadius: "2rem",
-                      }}
-                    />
-                  )}
+                  <Avatar alt={session.user.name || "Hi"} src={image} />
 
                   <Stack>
                     <small>Signed in as</small>
-                    <strong>{formatDisplayName(session.user)}</strong>
+                    <strong>
+                      {formatDisplayName(session.user) || "Anonymous"}
+                    </strong>
                   </Stack>
 
                   <Button
