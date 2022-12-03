@@ -22,6 +22,7 @@ import { unstable_getServerSession } from "next-auth/next";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { InitialSurvey, PrismaClient } from "@prisma/client";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { useRouter } from "next/router";
 
 const prisma = new PrismaClient();
 
@@ -73,6 +74,8 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
       defaultAvail[format(date, "yyyy-MM-dd")] = null;
     }
   }
+
+  const router = useRouter();
 
   const [submitted, setSubmitted] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
@@ -129,6 +132,7 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
       setSubmitted(false);
     } else {
       setSubmitSuccess(true);
+      router.push("/confirmation");
     }
   };
 
@@ -146,7 +150,7 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
       <Container>
         {(loading && <>loading</>) || (
           <Stack sx={{ mt: 4, mb: 4 }} spacing={4}>
-            <Typography variant="h3">Initial Survey</Typography>
+            <Typography variant="h2">Initial Survey</Typography>
             <AvailabilityPicker
               valid={availabilityValid}
               setValid={setAvailabilityValid}

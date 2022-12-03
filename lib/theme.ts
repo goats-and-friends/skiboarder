@@ -1,7 +1,7 @@
 import { createTheme } from "@mui/material/styles";
 import { green, grey, red } from "@mui/material/colors";
 
-export default function getTheme(prefersDarkMode: boolean) {
+function getRawTheme(prefersDarkMode: boolean) {
   const rawTheme = createTheme({
     palette: {
       mode: prefersDarkMode ? "dark" : "light",
@@ -39,6 +39,12 @@ export default function getTheme(prefersDarkMode: boolean) {
     },
   });
 
+  return rawTheme;
+}
+
+export function getIndexTheme(prefersDarkMode: boolean) {
+  const rawTheme = getRawTheme(prefersDarkMode);
+
   const fontHeader = {
     color: rawTheme.palette.text.primary,
     fontWeight: rawTheme.typography.fontWeightMedium,
@@ -67,7 +73,7 @@ export default function getTheme(prefersDarkMode: boolean) {
       h2: {
         ...rawTheme.typography.h2,
         ...fontHeader,
-        fontSize: 48,
+        fontSize: 24,
       },
       h3: {
         ...rawTheme.typography.h3,
@@ -82,6 +88,76 @@ export default function getTheme(prefersDarkMode: boolean) {
       h5: {
         ...rawTheme.typography.h5,
         fontSize: 20,
+        fontWeight: rawTheme.typography.fontWeightLight,
+      },
+      h6: {
+        ...rawTheme.typography.h6,
+        ...fontHeader,
+        fontSize: 18,
+      },
+      subtitle1: {
+        ...rawTheme.typography.subtitle1,
+        fontSize: 18,
+      },
+      body1: {
+        ...rawTheme.typography.body2,
+        fontWeight: rawTheme.typography.fontWeightRegular,
+        fontSize: 16,
+      },
+      body2: {
+        ...rawTheme.typography.body1,
+        fontSize: 14,
+      },
+    },
+  };
+  return theme;
+}
+
+export default function getTheme(prefersDarkMode: boolean) {
+  const rawTheme = getRawTheme(prefersDarkMode);
+  const fontHeader = {
+    color: rawTheme.palette.text.primary,
+    fontWeight: rawTheme.typography.fontWeightMedium,
+    fontFamily: "'Roboto Condensed', sans-serif",
+    textTransform: "uppercase",
+  };
+
+  const theme = {
+    ...rawTheme,
+    palette: {
+      ...rawTheme.palette,
+      background: {
+        ...rawTheme.palette.background,
+        placeholder: grey[200],
+      },
+    },
+    typography: {
+      ...rawTheme.typography,
+      fontHeader,
+      h1: {
+        ...rawTheme.typography.h1,
+        ...fontHeader,
+        letterSpacing: 0,
+        fontSize: 48,
+      },
+      h2: {
+        ...rawTheme.typography.h2,
+        ...fontHeader,
+        fontSize: 36,
+      },
+      h3: {
+        ...rawTheme.typography.h3,
+        ...fontHeader,
+        fontSize: 24,
+      },
+      h4: {
+        ...rawTheme.typography.h4,
+        ...fontHeader,
+        fontSize: 18,
+      },
+      h5: {
+        ...rawTheme.typography.h5,
+        fontSize: 18,
         fontWeight: rawTheme.typography.fontWeightLight,
       },
       h6: {
