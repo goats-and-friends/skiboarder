@@ -72,13 +72,45 @@ const LoginView = ({
             {error && (
               <Typography color="error">Error: {friendlyError}</Typography>
             )}
-            <Stack spacing={2} divider={<Divider />}>
-              <form action="/api/auth/signin/email" method="POST">
+            <Stack
+              spacing={2}
+              divider={
+                <Divider>
+                  <Typography variant="caption">or</Typography>
+                </Divider>
+              }
+            >
+              <Stack spacing={2}>
+                {providers &&
+                  Object.values(providers).map(
+                    (provider: ClientSafeProvider) => {
+                      if (provider.type === "oauth") {
+                        return (
+                          <div key={provider.name} style={{ marginBottom: 0 }}>
+                            <Button
+                              variant="outlined"
+                              fullWidth
+                              onClick={() => signIn(provider.id)}
+                            >
+                              Sign in with {provider.name}
+                            </Button>
+                          </div>
+                        );
+                      }
+                    }
+                  )}
+              </Stack>
+              <form
+                action="/api/auth/signin/email"
+                method="POST"
+                style={{ margin: 0 }}
+              >
                 <Stack spacing={2}>
                   <Input
                     name="csrfToken"
                     type="hidden"
                     defaultValue={csrfToken}
+                    sx={{ visibility: "hidden" }}
                   />
                   <TextField
                     id="email"
@@ -100,26 +132,6 @@ const LoginView = ({
                   </Typography>
                 </Stack>
               </form>
-              <Stack spacing={2}>
-                {providers &&
-                  Object.values(providers).map(
-                    (provider: ClientSafeProvider) => {
-                      if (provider.type === "oauth") {
-                        return (
-                          <div key={provider.name} style={{ marginBottom: 0 }}>
-                            <Button
-                              variant="outlined"
-                              fullWidth
-                              onClick={() => signIn(provider.id)}
-                            >
-                              Sign in with {provider.name}
-                            </Button>
-                          </div>
-                        );
-                      }
-                    }
-                  )}
-              </Stack>
             </Stack>
           </Stack>
         </Card>
