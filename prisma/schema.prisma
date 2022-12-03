@@ -6,22 +6,22 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("MONGODB_URI")
+  provider = "postgresql"
+  url      = env("DATABASE_URI")
 }
 
 model Account {
-  id                String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String
+  id                Int     @id @default(autoincrement())
+  userId            Int
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.String
-  access_token      String? @db.String
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.String
+  id_token          String?
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -30,15 +30,15 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  id           Int      @id @default(autoincrement())
   sessionToken String   @unique
-  userId       String
+  userId       Int
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  id            Int            @id @default(autoincrement())
   name          String?
   email         String?        @unique
   emailVerified DateTime?
@@ -49,25 +49,25 @@ model User {
 }
 
 model Availability {
-  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  id              Int           @id @default(autoincrement())
   date            String
   status          String
-  initialSurvey   InitialSurvey? @relation(fields: [initialSurveyId], references: [id])
-  initialSurveyId String?        @db.ObjectId
+  initialSurvey   InitialSurvey @relation(fields: [initialSurveyId], references: [id], onDelete: Cascade)
+  initialSurveyId Int
 }
 
 model InitialSurvey {
-  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  id             Int            @id @default(autoincrement())
   guests         Int
   availabilities Availability[]
-  user           User           @relation(fields: [userEmail], references: [email])
+  user           User           @relation(fields: [userEmail], references: [email], onDelete: Cascade)
   interestLevel  String
   comment        String
   userEmail      String         @unique
 }
 
 model VerificationToken {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id         Int      @id @default(autoincrement())
   identifier String
   token      String   @unique
   expires    DateTime
