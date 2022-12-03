@@ -64,14 +64,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     },
   });
   const initialSurvey = user?.initialSurvey;
-  return { props: { initialSurvey } };
+  const dbName = user?.name;
+  return { props: { initialSurvey, dbName } };
 };
 
 type AppProps = {
+  dbName: string;
   initialSurvey: InitialSurvey & { availabilities: Availability[] };
 };
 
-const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
+const Home: NextPage<AppProps> = ({ dbName, initialSurvey }: AppProps) => {
   const { data: session, status } = useSession();
   const loading = status === "loading";
 
@@ -90,9 +92,8 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
   }
 
   let profileComplete = false;
-  if (session !== undefined && session?.user !== undefined) {
-    const name = session?.user.name;
-    profileComplete = name !== null && name !== undefined;
+  if (dbName) {
+    profileComplete = dbName !== null && dbName !== undefined;
   }
 
   const router = useRouter();
