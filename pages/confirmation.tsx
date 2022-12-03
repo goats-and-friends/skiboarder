@@ -24,7 +24,7 @@ const Home: NextPage = () => {
         <Typography variant="h2">Response submitted</Typography>
         <Typography> Your survey response has been recorded. </Typography>
         <Typography>
-          Click <Link href="/">here</Link> to edit your response.
+          Click <Link href="/initial-survey">here</Link> to edit your response.
         </Typography>
       </Container>
 

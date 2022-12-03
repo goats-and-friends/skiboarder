@@ -97,6 +97,9 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
 
   const router = useRouter();
 
+  const openProfile = () => {
+    router.push("/profile");
+  };
   const openSurvey = () => {
     router.push("/initial-survey");
   };
@@ -125,7 +128,7 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
               sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
             >
               <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton onClick={openProfile}>
                   <ListItemIcon>
                     <AccountCircleIcon />
                   </ListItemIcon>

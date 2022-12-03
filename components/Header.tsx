@@ -22,7 +22,7 @@ export default function Header() {
   const { data: session, status } = useSession();
   const loading = status === "loading";
 
-  const image = session?.user?.image;
+  const image = session?.user?.image ?? undefined;
   return (
     <AppBar
       position="absolute"
