@@ -23,6 +23,20 @@ import { authOptions } from "./api/auth/[...nextauth]";
 import { InitialSurvey, PrismaClient } from "@prisma/client";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useRouter } from "next/router";
+import * as React from "react";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import Divider from "@mui/material/Divider";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import Avatar from "@mui/material/Avatar";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import InboxIcon from "@mui/icons-material/Inbox";
+import DraftsIcon from "@mui/icons-material/Drafts";
+import PollIcon from "@mui/icons-material/Poll";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const prisma = new PrismaClient();
 
@@ -75,65 +89,16 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
     }
   }
 
+  let profileComplete = false;
+  if (session !== undefined && session?.user !== undefined) {
+    const name = session?.user.name;
+    profileComplete = name !== null && name !== undefined;
+  }
+
   const router = useRouter();
 
-  const [submitted, setSubmitted] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-
-  const [availability, setAvailability] = useState<Availability>(defaultAvail);
-  const [availabilityValid, setAvailabilityValid] = useState<boolean>(true);
-
-  const [interestLevel, setInterestLevel] = useState<string | null>(
-    initialSurvey?.interestLevel || null
-  );
-  const [interestLevelValid, setInterestLevelValid] = useState<boolean>(true);
-  const handleInterestLevel = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInterestLevel((event.target as HTMLInputElement).value);
-    setSubmitted(false);
-    setInterestLevelValid(true);
-  };
-  const [guests, setGuests] = useState<number | null>(
-    initialSurvey?.guests || null
-  );
-  const [guestsValid, setGuestsValid] = useState<boolean>(true);
-  const handleGuests = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setGuests(parseInt((event.target as HTMLInputElement).value));
-    setSubmitted(false);
-    setGuestsValid(true);
-  };
-  const [comment, setComment] = useState<string>(initialSurvey?.comment || "");
-  const handleComment = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setComment((event.target as HTMLInputElement).value);
-    setSubmitted(false);
-  };
-
-  const submit = async () => {
-    const survey = {
-      availability,
-      interestLevel,
-      guests,
-      comment,
-    };
-    setAvailabilityValid(
-      Object.values(availability).filter((s) => s === null).length === 0
-    );
-    setInterestLevelValid(interestLevel !== null);
-    setGuestsValid(guests !== null && !isNaN(guests));
-    if (!availabilityValid || !interestLevelValid || !guestsValid) {
-      return;
-    }
-    setSubmitted(true);
-    const response = await fetch("/api/initial-survey", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(survey),
-    });
-    if (!response.ok) {
-      setSubmitted(false);
-    } else {
-      setSubmitSuccess(true);
-      router.push("/confirmation");
-    }
+  const openSurvey = () => {
+    router.push("/initial-survey");
   };
 
   return (
@@ -149,99 +114,44 @@ const Home: NextPage<AppProps> = ({ initialSurvey }: AppProps) => {
       <Header />
       <Container>
         {(loading && <>loading</>) || (
-          <Stack sx={{ mt: 4, mb: 4 }} spacing={4}>
-            <Typography variant="h2">Initial Survey</Typography>
-            <AvailabilityPicker
-              valid={availabilityValid}
-              setValid={setAvailabilityValid}
-              state={availability}
-              setState={setAvailability}
-              setSubmitted={setSubmitted}
-            />
-            <FormControl>
-              <FormLabel
-                error={!interestLevelValid}
-                id="demo-radio-buttons-group-label"
-              >
-                *How interested are you in the trip? (This is not a commitment.)
-              </FormLabel>
-              {interestLevelValid ? (
-                ""
-              ) : (
-                <Typography variant="caption" color="error">
-                  Response is required.
-                </Typography>
-              )}
-              <RadioGroup
-                aria-labelledby="demo-radio-buttons-group-label"
-                defaultValue="definitely"
-                name="interest-level"
-                onChange={handleInterestLevel}
-                value={interestLevel}
-              >
-                <FormControlLabel
-                  value="definitely"
-                  control={<Radio />}
-                  label="Definitely going; wouldn't miss it!"
-                />
-                <FormControlLabel
-                  value="probably"
-                  control={<Radio />}
-                  label="Probably going, unless something else comes up"
-                />
-                <FormControlLabel
-                  value="interested"
-                  control={<Radio />}
-                  label="Interested, but unlikely"
-                />
-              </RadioGroup>
-            </FormControl>
-            <FormControl
-              error={!guestsValid}
-              component="fieldset"
-              variant="standard"
+          <Stack sx={{ mt: 4, mb: 4 }} spacing={2}>
+            <Typography variant="h2">Welcome!</Typography>
+            <Typography>
+              This is your home for all things Ski Trip. Keep checking back for
+              new tasks, and be on the lookout for updates in your email.
+            </Typography>
+            <Typography variant="h3">Your tasks</Typography>
+            <List
+              sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
             >
-              <FormLabel component="legend">
-                *Roughly how many guests will join you?
-              </FormLabel>
-              {guestsValid ? (
-                ""
-              ) : (
-                <Typography variant="caption" color="error">
-                  Response is required.
-                </Typography>
-              )}
-              <TextField
-                type="number"
-                error={!guestsValid}
-                onChange={handleGuests}
-                value={guests}
-                InputProps={{
-                  inputProps: {
-                    min: 0,
-                  },
-                }}
-              ></TextField>
-            </FormControl>
-            <FormControl component="fieldset" variant="standard">
-              <FormLabel component="legend">Any other comment?</FormLabel>
-              <TextField
-                variant="outlined"
-                multiline
-                onChange={handleComment}
-                value={comment}
-              ></TextField>
-            </FormControl>
-            <Typography>*Required</Typography>
-            <FormControl>
-              <Button variant="contained" onClick={submit} disabled={submitted}>
-                {submitted ? (
-                  <>Submitted{submitSuccess ? <CheckCircleIcon /> : ""}</>
-                ) : (
-                  "Submit"
-                )}
-              </Button>
-            </FormControl>
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <AccountCircleIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Set your profile" />
+                  {profileComplete ? (
+                    <CheckCircleIcon color="success" />
+                  ) : (
+                    <RadioButtonUncheckedIcon />
+                  )}
+                </ListItemButton>
+              </ListItem>
+              <Divider variant="inset"></Divider>
+              <ListItem disablePadding>
+                <ListItemButton onClick={openSurvey}>
+                  <ListItemIcon>
+                    <PollIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Complete interest survey" />
+                  {initialSurvey ? (
+                    <CheckCircleIcon color="success" />
+                  ) : (
+                    <RadioButtonUncheckedIcon />
+                  )}
+                </ListItemButton>
+              </ListItem>
+            </List>
           </Stack>
         )}
       </Container>

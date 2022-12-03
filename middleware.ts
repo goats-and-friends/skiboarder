@@ -22,4 +22,6 @@ export default withAuth(
   }
 );
 
-export const config = { matcher: ["/dashboard", "/", "/register", "/login"] };
+export const config = {
+  matcher: ["/dashboard", "/initial-survey", "/", "/register", "/login"],
+};
