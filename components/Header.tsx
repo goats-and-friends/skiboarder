@@ -57,7 +57,7 @@ export default function Header() {
             {(status === "loading" && <></>) ||
               (session?.user && (
                 <>
-                  <Avatar alt={session.user.name || "Hi"} src={image} />
+                  <Avatar alt={session.user.name || ""} src={image} />
 
                   <Stack>
                     <small>Signed in as</small>
